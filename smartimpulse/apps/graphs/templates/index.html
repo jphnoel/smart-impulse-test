@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<title>Test métier Smart Impulse</title>
+	<style type="text/css">
+		body {
+			font: 18px/1.5em Helvetica, Arial, sans-serif;
+		}
+
+		h2 {
+			font: normal 32px Helvetica, Arial, sans-serif;
+		}
+
+		#header {
+			text-align: center;
+			width: 900px;
+			margin: auto;
+		}
+
+		#content {
+			width: 880px;
+			margin: 0 auto;
+			padding: 10px;
+		}
+
+		#main {
+			height: 600px;
+		}
+	</style>
+	<script src="https://cdn.jsdelivr.net/npm/echarts@5.2.1/dist/echarts.js" integrity="sha256-zV9ArBpbKD/jm+76tSTB7DUFS75h/TOOvcjyRA1Ou6Q=" crossorigin="anonymous"></script>
+</head>
+<body>
+
+	<div id="header">
+		<h2>Test métier Smart Impulse</h2>
+	</div>
+
+	<div id="content">
+
+                <div>
+                  <input type="radio" name="type" onclick="draw_power()"><label>Puissance</label>
+                  <input type="radio" name="type" onclick="draw_energy()"><label>Énergie</label>
+                </div>
+
+		<div id="main"></div>
+
+	</div>
+	<script type="text/javascript">
+
+          function draw(result, drawing_type) {
+              const categories = result["categories"]
+              
+              let sum_data = []
+              for (const item in result["data"]) {
+                  sum_data.push([parseInt(item), result["data"][item]["sum"]])
+              }
+
+              let series = [{"name": "sum",
+                             "type": "line",
+                             "symbol": "none",
+                             "data": sum_data}]
+              
+              for (const index in categories) {
+                  const category = categories[index]
+                  serie = {"name": category,
+                           "type": drawing_type,
+                           "stack": "Total",
+                           "symbol": "none",
+                           "areaStyle": {},
+                           "data": []}
+                  for (const item in result["data"]) {
+                      serie["data"].push([parseInt(item), result["data"][item][category]])
+                  }
+                  series.push(serie)
+              }
+              
+	      const options = {
+                  legend: {"data": categories},
+                  xAxis: {"type": "time"},
+                  yAxis: {"type": "value"},
+                  series: series
+              };
+              
+	      const myChart = echarts.init(document.getElementById("main"));
+              myChart.clear()
+	      myChart.setOption(options);
+          }
+          
+          function draw_power() {
+              fetch({% url "power" %}).then(r => r.json()).then(result => {
+                  draw(result, "line")
+              });
+          };
+
+          function draw_energy() {
+              fetch({% url "energy" %}).then(r => r.json()).then(result => {
+                  draw(result, "bar")
+              });
+          };
+          
+	</script>
+</body>
+</html>
