@@ -5,27 +5,45 @@ import json
 from django.http import JsonResponse
 from django.shortcuts import render
 
-from smartimpulse.apps.graphs.models import GraphsCategory, GraphsData
+from smartimpulse.apps.graphs.models import (
+    GraphsCategory,
+    GraphsData,
+    GraphsInstallation,
+)
 
 
 def graphs(request):
     return render(request, "index.html", {})
 
 
+def installations(request):
+    installations = GraphsInstallation.objects.all()
+    result = {"data": [installation.name for installation in installations]}
+    return JsonResponse(result)
+
+
 def to_ms(dt):
     return int(dt.strftime("%s")) * 1000
 
 
+def get_installation(request):
+    return request.GET["installation"]
+
+
 def power(request):
+
+    installation = get_installation(request)
 
     categories = GraphsCategory.objects.all()
 
     result = {"categories": [category.name for category in categories], "data": {}}
 
-    for data in GraphsData.objects.order_by("dt"):
+    for data in GraphsData.objects.order_by("dt").filter(
+        installation__name=installation
+    ):
         date_ms = to_ms(data.dt)
         json_data = json.loads(data.json_data)
-        result["data"][date_ms] = {"sum": int(data.power)}
+        result["data"][date_ms] = {"Total": int(data.power)}
         for category in categories:
             result["data"][date_ms][category.name] = json_data.get(str(category.id), 0)
 
@@ -34,6 +52,8 @@ def power(request):
 
 def energy(request):
 
+    installation = get_installation(request)
+
     categories = GraphsCategory.objects.all()
 
     result = {
@@ -41,11 +61,13 @@ def energy(request):
         "data": defaultdict(lambda: defaultdict(int)),
     }
 
-    for data in GraphsData.objects.order_by("dt"):
+    for data in GraphsData.objects.order_by("dt").filter(
+        installation__name=installation
+    ):
         date = data.dt
         date_ms = to_ms(datetime(year=date.year, month=date.month, day=date.day))
         json_data = json.loads(data.json_data)
-        result["data"][date_ms]["sum"] += int(data.power) / 6
+        result["data"][date_ms]["Total"] += int(data.power) / 6
         for category in categories:
             result["data"][date_ms][category.name] += (
                 json_data.get(str(category.id), 0) / 6

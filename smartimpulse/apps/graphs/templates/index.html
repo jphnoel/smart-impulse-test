@@ -39,30 +39,52 @@
 	<div id="content">
 
                 <div>
-                  <input type="radio" name="type" onclick="draw_power()"><label>Puissance</label>
-                  <input type="radio" name="type" onclick="draw_energy()"><label>Énergie</label>
+                  <input type="radio" name="chart_type" onclick="async_draw()" value="power" checked><label>Puissance</label>
+                  <input type="radio" name="chart_type" onclick="async_draw()" value="energy"><label>Énergie</label>
                 </div>
+
+		<div id="installations"></div>
 
 		<div id="main"></div>
 
 	</div>
 	<script type="text/javascript">
 
+          PARAMS = {"power": {"url": {% url "power" %}, "drawing_type": "line"},
+                    "energy": {"url": {% url "energy" %}, "drawing_type": "bar"}}
+
+          window.onload = function() {
+              fetch({% url "installations" %}).then(r => r.json()).then(result => {
+                  container = document.getElementById("installations")
+                  for (index in result["data"]) {
+                      installation = result["data"][index]
+                      const input = document.createElement("input");
+                      input.type = "radio";
+                      input.name = "installations";
+                      input.value = installation;
+                      input.onclick = async_draw;
+                      if (index == 0) {input.checked = true}
+                      container.appendChild(input);
+                      const text = document.createTextNode(installation);
+                      container.appendChild(text);
+                  }
+              }).then(async_draw)
+          }
+
           function draw(result, drawing_type) {
               const categories = result["categories"]
               
               let sum_data = []
               for (const item in result["data"]) {
-                  sum_data.push([parseInt(item), result["data"][item]["sum"]])
+                  sum_data.push([parseInt(item), result["data"][item]["Total"]])
               }
 
-              let series = [{"name": "sum",
+              let series = [{"name": "Total",
                              "type": "line",
                              "symbol": "none",
                              "data": sum_data}]
               
-              for (const index in categories) {
-                  const category = categories[index]
+              for (const category of categories) {
                   serie = {"name": category,
                            "type": drawing_type,
                            "stack": "Total",
@@ -76,7 +98,7 @@
               }
               
 	      const options = {
-                  legend: {"data": categories},
+                  legend: {"data": ["Total"].concat(categories)},
                   xAxis: {"type": "time"},
                   yAxis: {"type": "value"},
                   series: series
@@ -86,19 +108,25 @@
               myChart.clear()
 	      myChart.setOption(options);
           }
-          
-          function draw_power() {
-              fetch({% url "power" %}).then(r => r.json()).then(result => {
-                  draw(result, "line")
-              });
-          };
 
-          function draw_energy() {
-              fetch({% url "energy" %}).then(r => r.json()).then(result => {
-                  draw(result, "bar")
+          function get_installation() {
+              return document.querySelector('input[name="installations"]:checked').value
+          }
+
+          function get_chart_type() {
+              return document.querySelector('input[name="chart_type"]:checked').value
+          }
+
+          function async_draw() {
+              installation = get_installation()
+              chart_type = get_chart_type()
+              url = PARAMS[chart_type]["url"]
+              drawing_type = PARAMS[chart_type]["drawing_type"]
+              fetch(`${url}?installation=${installation}`).then(r => r.json()).then(result => {
+                  draw(result, drawing_type)
               });
-          };
-          
+          }
+                    
 	</script>
 </body>
 </html>

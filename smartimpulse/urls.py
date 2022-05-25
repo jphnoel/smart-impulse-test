@@ -22,4 +22,5 @@ urlpatterns = [
     path("graphs/", views.graphs),
     path("power/", views.power, name="power"),
     path("energy/", views.energy, name="energy"),
+    path("installations/", views.installations, name="installations"),
 ]
