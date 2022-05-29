@@ -50,14 +50,16 @@
 	</div>
 	<script type="text/javascript">
 
-          PARAMS = {"power": {"url": {% url "power" %}, "drawing_type": "line"},
-                    "energy": {"url": {% url "energy" %}, "drawing_type": "bar"}}
+          "use strict";
+
+          const PARAMS = {"power": {"url": {% url "power" %}, "drawing_type": "line"},
+                          "energy": {"url": {% url "energy" %}, "drawing_type": "bar"}}
 
           window.onload = function() {
               fetch({% url "installations" %}).then(r => r.json()).then(result => {
-                  container = document.getElementById("installations")
-                  for (index in result["data"]) {
-                      installation = result["data"][index]
+                  const container = document.getElementById("installations")
+                  for (const index in result["data"]) {
+                      const installation = result["data"][index]
                       const input = document.createElement("input");
                       input.type = "radio";
                       input.name = "installations";
@@ -85,12 +87,12 @@
                              "data": sum_data}]
               
               for (const category of categories) {
-                  serie = {"name": category,
-                           "type": drawing_type,
-                           "stack": "Total",
-                           "symbol": "none",
-                           "areaStyle": {},
-                           "data": []}
+                  const serie = {"name": category,
+                                 "type": drawing_type,
+                                 "stack": "Total",
+                                 "symbol": "none",
+                                 "areaStyle": {},
+                                 "data": []}
                   for (const item in result["data"]) {
                       serie["data"].push([parseInt(item), result["data"][item][category]])
                   }
@@ -98,10 +100,10 @@
               }
               
 	      const options = {
-                  legend: {"data": ["Total"].concat(categories)},
-                  xAxis: {"type": "time"},
-                  yAxis: {"type": "value"},
-                  series: series
+                  "legend": {"data": ["Total"].concat(categories)},
+                  "xAxis": {"type": "time"},
+                  "yAxis": {"type": "value"},
+                  "series": series
               };
               
 	      const myChart = echarts.init(document.getElementById("main"));
@@ -118,10 +120,10 @@
           }
 
           function async_draw() {
-              installation = get_installation()
-              chart_type = get_chart_type()
-              url = PARAMS[chart_type]["url"]
-              drawing_type = PARAMS[chart_type]["drawing_type"]
+              const installation = get_installation()
+              const chart_type = get_chart_type()
+              const url = PARAMS[chart_type]["url"]
+              const drawing_type = PARAMS[chart_type]["drawing_type"]
               fetch(`${url}?installation=${installation}`).then(r => r.json()).then(result => {
                   draw(result, drawing_type)
               });
