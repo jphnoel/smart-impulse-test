@@ -101,7 +101,14 @@
               
 	      const options = {
                   "legend": {"data": ["Total"].concat(categories)},
-                  "xAxis": {"type": "time"},
+                  "xAxis": {"type": "time",
+                            "axisLabel": {
+                                "formatter": function (value) {
+                                    const date = new Date(value);
+                                    return date.toLocaleDateString("fr");
+                                }
+                            }
+                           },
                   "yAxis": {"type": "value"},
                   "series": series
               };
