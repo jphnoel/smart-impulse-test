@@ -1,61 +1,61 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<meta charset="utf-8" />
-	<title>Test métier Smart Impulse</title>
-	<style type="text/css">
-		body {
-			font: 18px/1.5em Helvetica, Arial, sans-serif;
-		}
+        <meta charset="utf-8" />
+        <title>Test métier Smart Impulse</title>
+        <style type="text/css">
+                body {
+                        font: 18px/1.5em Helvetica, Arial, sans-serif;
+                }
 
-		h2 {
-			font: normal 32px Helvetica, Arial, sans-serif;
-		}
+                h2 {
+                        font: normal 32px Helvetica, Arial, sans-serif;
+                }
 
-		#header {
-			text-align: center;
-			width: 900px;
-			margin: auto;
-		}
+                #header {
+                        text-align: center;
+                        width: 900px;
+                        margin: auto;
+                }
 
-		#content {
-			width: 880px;
-			margin: 0 auto;
-			padding: 10px;
-		}
+                #content {
+                        width: 880px;
+                        margin: 0 auto;
+                        padding: 10px;
+                }
 
-		#main {
-			height: 600px;
-		}
-	</style>
-	<script src="https://cdn.jsdelivr.net/npm/echarts@5.2.1/dist/echarts.js" integrity="sha256-zV9ArBpbKD/jm+76tSTB7DUFS75h/TOOvcjyRA1Ou6Q=" crossorigin="anonymous"></script>
+                #main {
+                        height: 600px;
+                }
+        </style>
+        <script src="https://cdn.jsdelivr.net/npm/echarts@5.2.1/dist/echarts.js" integrity="sha256-zV9ArBpbKD/jm+76tSTB7DUFS75h/TOOvcjyRA1Ou6Q=" crossorigin="anonymous"></script>
 </head>
 <body>
 
-	<div id="header">
-		<h2>Test métier Smart Impulse</h2>
-	</div>
+        <div id="header">
+                <h2>Test métier Smart Impulse</h2>
+        </div>
 
-	<div id="content">
+        <div id="content">
 
                 <div>
                   <input type="radio" name="chart_type" onclick="async_draw()" value="power" checked><label>Puissance</label>
                   <input type="radio" name="chart_type" onclick="async_draw()" value="energy"><label>Énergie</label>
                 </div>
 
-		<div id="installations"></div>
+                <div id="installations"></div>
 
-		<div id="main"></div>
+                <div id="main"></div>
 
-	</div>
-	<script type="text/javascript">
+        </div>
+        <script type="text/javascript">
 
           "use strict";
 
           const PARAMS = {"power": {"url": {% url "power" %}, "drawing_type": "line"},
                           "energy": {"url": {% url "energy" %}, "drawing_type": "bar"}}
 
-	  const myChart = echarts.init(document.getElementById("main"));
+          const myChart = echarts.init(document.getElementById("main"));
 
           window.onload = function() {
               fetch({% url "installations" %}).then(r => r.json()).then(result => {
@@ -101,7 +101,7 @@
                   series.push(serie)
               }
               
-	      const options = {
+              const options = {
                   "legend": {"data": ["Total"].concat(categories)},
                   "xAxis": {"type": "time",
                             "axisLabel": {
@@ -116,7 +116,7 @@
               };
               
               myChart.clear()
-	      myChart.setOption(options);
+              myChart.setOption(options);
           }
 
           function get_installation() {
@@ -137,6 +137,6 @@
               });
           }
                     
-	</script>
+        </script>
 </body>
 </html>
