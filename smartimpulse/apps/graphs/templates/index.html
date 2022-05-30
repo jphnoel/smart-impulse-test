@@ -55,6 +55,8 @@
           const PARAMS = {"power": {"url": {% url "power" %}, "drawing_type": "line"},
                           "energy": {"url": {% url "energy" %}, "drawing_type": "bar"}}
 
+	  const myChart = echarts.init(document.getElementById("main"));
+
           window.onload = function() {
               fetch({% url "installations" %}).then(r => r.json()).then(result => {
                   const container = document.getElementById("installations")
@@ -113,7 +115,6 @@
                   "series": series
               };
               
-	      const myChart = echarts.init(document.getElementById("main"));
               myChart.clear()
 	      myChart.setOption(options);
           }
