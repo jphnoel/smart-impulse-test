@@ -1,2 +1,5 @@
+beautifulsoup4-4.11.1
 black==22.3.0
 Django==4.0.4
+pytz==2022.1
+

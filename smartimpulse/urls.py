@@ -19,7 +19,7 @@ from smartimpulse.apps.graphs import views
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("graphs/", views.graphs),
+    path("graphs/", views.graphs, name="graphs"),
     path("power/", views.power, name="power"),
     path("energy/", views.energy, name="energy"),
     path("installations/", views.installations, name="installations"),
