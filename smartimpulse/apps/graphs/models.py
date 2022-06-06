@@ -22,7 +22,6 @@ class GraphsCategory(models.Model):
     name = models.CharField(max_length=50)
 
     class Meta:
-        managed = False
         db_table = "graphs_category"
 
 
@@ -33,7 +32,6 @@ class GraphsData(models.Model):
     installation = models.ForeignKey("GraphsInstallation", models.DO_NOTHING)
 
     class Meta:
-        managed = False
         db_table = "graphs_data"
 
 
@@ -41,5 +39,4 @@ class GraphsInstallation(models.Model):
     name = models.CharField(max_length=50)
 
     class Meta:
-        managed = False
         db_table = "graphs_installation"
