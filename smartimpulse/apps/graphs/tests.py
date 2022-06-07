@@ -5,7 +5,6 @@ from bs4 import BeautifulSoup
 from django.test import Client, TestCase
 from django.urls import reverse
 from django.utils import timezone
-import pytz
 
 from smartimpulse.apps.graphs.models import (
     GraphsCategory,
