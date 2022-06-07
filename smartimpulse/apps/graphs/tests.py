@@ -2,7 +2,7 @@ from datetime import datetime
 import json
 
 from bs4 import BeautifulSoup
-from django.test import Client, TestCase
+from django.test import TestCase
 from django.urls import reverse
 from django.utils import timezone
 
@@ -33,16 +33,14 @@ class GraphsTestCase(TestCase):
         self.graphs_data.save()
 
     def test_graphs(self):
-        client = Client()
-        response = client.get(reverse("graphs"))
+        response = self.client.get(reverse("graphs"))
         self.assertEqual(response.status_code, 200)
         soup = BeautifulSoup(response.content, features="html.parser")
         [title] = soup.find_all("title")
         assert title.get_text() == "Test métier Smart Impulse"
 
     def test_installations(self):
-        client = Client()
-        response = client.get(reverse("installations"))
+        response = self.client.get(reverse("installations"))
         self.assertEqual(response.status_code, 200)
         self.assertEqual(
             response.json(), {"data": ["installation_1", "installation_2"]}
@@ -50,8 +48,7 @@ class GraphsTestCase(TestCase):
 
     def test_power(self):
         now_ms = str(self.now.timestamp())
-        client = Client()
-        response = client.get(
+        response = self.client.get(
             f"{reverse('power')}?installation={self.installation_1.name}"
         )
         self.assertEqual(response.status_code, 200)
@@ -69,8 +66,7 @@ class GraphsTestCase(TestCase):
                 year=self.now.year, month=self.now.month, day=self.now.day
             ).timestamp()
         )
-        client = Client()
-        response = client.get(
+        response = self.client.get(
             f"{reverse('energy')}?installation={self.installation_1.name}"
         )
         self.assertEqual(response.status_code, 200)
