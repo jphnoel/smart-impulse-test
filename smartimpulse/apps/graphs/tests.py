@@ -15,22 +15,17 @@ from smartimpulse.apps.graphs.models import (
 
 class GraphsTestCase(TestCase):
     def setUp(self):
-        self.category_1 = GraphsCategory(name="category_1")
-        self.category_1.save()
-        self.category_2 = GraphsCategory(name="category_2")
-        self.category_2.save()
-        self.installation_1 = GraphsInstallation(name="installation_1")
-        self.installation_1.save()
-        self.installation_2 = GraphsInstallation(name="installation_2")
-        self.installation_2.save()
+        self.category_1 = GraphsCategory.objects.create(name="category_1")
+        self.category_2 = GraphsCategory.objects.create(name="category_2")
+        self.installation_1 = GraphsInstallation.objects.create(name="installation_1")
+        self.installation_2 = GraphsInstallation.objects.create(name="installation_2")
         self.now = timezone.now()
-        self.graphs_data = GraphsData(
+        self.graphs_data = GraphsData.objects.create(
             dt=self.now,
             power=6,
             json_data=json.dumps({str(self.category_1.id): 6}),
             installation=self.installation_1,
         )
-        self.graphs_data.save()
 
     def test_graphs(self):
         response = self.client.get(reverse("graphs"))
