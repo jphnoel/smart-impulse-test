@@ -11,7 +11,6 @@ from smartimpulse.apps.graphs.models import (
     GraphsData,
     GraphsInstallation,
 )
-from smartimpulse.apps.graphs.views import to_ms
 
 
 class GraphsTestCase(TestCase):
@@ -50,7 +49,7 @@ class GraphsTestCase(TestCase):
         )
 
     def test_power(self):
-        now_ms = str(to_ms(self.now))
+        now_ms = str(self.now.timestamp())
         client = Client()
         response = client.get(
             f"{reverse('power')}?installation={self.installation_1.name}"
@@ -66,7 +65,9 @@ class GraphsTestCase(TestCase):
 
     def test_energy(self):
         today_ms = str(
-            to_ms(datetime(year=self.now.year, month=self.now.month, day=self.now.day))
+            datetime(
+                year=self.now.year, month=self.now.month, day=self.now.day
+            ).timestamp()
         )
         client = Client()
         response = client.get(

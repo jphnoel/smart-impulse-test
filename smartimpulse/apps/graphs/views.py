@@ -22,10 +22,6 @@ def installations(request):
     return JsonResponse(result)
 
 
-def to_ms(dt):
-    return int(dt.strftime("%s")) * 1000
-
-
 def get_installation(request):
     return request.GET["installation"]
 
@@ -41,7 +37,7 @@ def power(request):
     for data in GraphsData.objects.order_by("dt").filter(
         installation__name=installation
     ):
-        date_ms = to_ms(data.dt)
+        date_ms = data.dt.timestamp()
         json_data = json.loads(data.json_data)
         result["data"][date_ms] = {"Total": int(data.power)}
         for category in categories:
@@ -65,7 +61,7 @@ def energy(request):
         installation__name=installation
     ):
         date = data.dt
-        date_ms = to_ms(datetime(year=date.year, month=date.month, day=date.day))
+        date_ms = datetime(year=date.year, month=date.month, day=date.day).timestamp()
         json_data = json.loads(data.json_data)
         result["data"][date_ms]["Total"] += int(data.power) / 6
         for category in categories:
